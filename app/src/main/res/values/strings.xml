@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Активность</string>
+
+    <string name="start_workout">Старт</string>
+    <string name="pause_workout">Пауза</string>
+    <string name="stop_workout">Стоп</string>
+    <string name="continue_workout">Продолжить</string>
+
+    <string name="workout_time">00:00:00</string>
+    <string name="workout_time_hint">длительность</string>
+
+    <string name="workout_pace">0\'00\'</string>
+    <string name="workout_pace_hint">текущий темп м.км.</string>
+
+    <string name="workout_avg_pace">0\'00\'</string>
+    <string name="workout_avg_pace_hint">средний темп м.км.</string>
+
+    <string name="workout_pulse">000</string>
+    <string name="workout_pulse_hint">пульс уд.м.</string>
+
+    <string name="workout_distance">00.000</string>
+    <string name="workout_distance_hint">дистанция км.</string>
+
+    <string name="workout_btn_mark_set">Добавить метку</string>
+    <string name="workout_btn_mark_remove">Убрать метку</string>
+</resources>
