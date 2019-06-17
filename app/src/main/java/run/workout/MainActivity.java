@@ -2,6 +2,7 @@ package run.workout;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnContinue.setOnClickListener(this);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override

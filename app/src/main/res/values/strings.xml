@@ -15,10 +15,10 @@
     <string name="workout_avg_pace">0\'00\'</string>
     <string name="workout_avg_pace_hint">средний темп м.км.</string>
 
-    <string name="workout_pulse">000</string>
+    <string name="workout_pulse">0</string>
     <string name="workout_pulse_hint">пульс уд.м.</string>
 
-    <string name="workout_distance">00.000</string>
+    <string name="workout_distance">0</string>
     <string name="workout_distance_hint">дистанция км.</string>
 
     <string name="workout_btn_mark_set">Добавить метку</string>
