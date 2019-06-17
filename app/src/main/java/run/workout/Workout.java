@@ -105,7 +105,7 @@ class Workout extends TimerTask {
             Location currLocation = lastPoint.getLocation();
 
             float distance = prevLocation.distanceTo(currLocation);
-            this.distance += distance;
+            this.distance += (distance / 1000);
 
             float time = lastPoint.getTimestamp() - prevPoint.getTimestamp();
             Float pace = Pace.calculatePace(time / 1000, distance);
