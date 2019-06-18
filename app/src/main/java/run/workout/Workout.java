@@ -27,10 +27,9 @@ class Workout extends TimerTask {
     private Boolean pauseActivity = false;
     private SimpleDateFormat formatter;
     private List<Point> points = new ArrayList<Point>();
-    private int sizeLocationPoints = 0;
 
     private int cachePaceCount = 0;
-    private float cachePaceSum = 0;
+    private double cachePaceSum = 0;
 
     Workout() {
         this.formatter = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -108,13 +107,12 @@ class Workout extends TimerTask {
             this.distance += (distance / 1000);
 
             float time = lastPoint.getTimestamp() - prevPoint.getTimestamp();
-            Float pace = Pace.calculatePace(time / 1000, distance);
+            double pace = Pace.calculatePace(time / 1000, distance);
 
             lastPoint.setPace(pace);
             this.cachePaceCount++;
             this.cachePaceSum += pace;
             this.eventListener.run();
-            this.sizeLocationPoints++;
         }
     }
 
@@ -123,12 +121,11 @@ class Workout extends TimerTask {
      * @return int - средний темп всех точек.
      */
     String getAVGPace() {
-        DecimalFormat df = new DecimalFormat("#.##");
         if (this.cachePaceCount == 0) {
-            return df.format(0);
+            return Pace.format(0);
         }
 
-        return df.format(this.cachePaceSum / this.cachePaceCount);
+        return Pace.format(this.cachePaceSum / this.cachePaceCount);
     }
 
     /**
@@ -136,20 +133,20 @@ class Workout extends TimerTask {
      * @return - средний темп за последние 10 точек.
      */
     String getPace() {
-        DecimalFormat df = new DecimalFormat("#.##");
-        if (this.sizeLocationPoints == 0) {
-            return df.format(0);
+        int size = this.points.size();
+        if (size == 0) {
+            return Pace.format(0);
         }
 
-        float sum = 0;
+        double sum = 0;
         int count = 0;
-        for (int i = this.sizeLocationPoints; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             Point point = this.points.get(i);
             if (point.isPause()) {
                 continue;
             }
 
-            float pace = point.getPace();
+            double pace = point.getPace();
             if (pace == 0) {
                 continue;
             }
@@ -161,7 +158,7 @@ class Workout extends TimerTask {
             }
         }
 
-        return df.format(sum / this.sizeLocationPoints);
+        return Pace.format(sum / count);
     }
 
     String getBPM() {

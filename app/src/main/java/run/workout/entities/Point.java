@@ -5,7 +5,7 @@ import android.location.Location;
 public class Point {
 
     private int bpm;
-    private float pace;
+    private double pace;
     private Long timestamp;
     private Location location;
     private Boolean pause = false;
@@ -42,11 +42,11 @@ public class Point {
         return this.bpm;
     }
 
-    public float getPace() {
+    public double getPace() {
         return this.pace;
     }
 
-    public void setPace(float pace) {
+    public void setPace(double pace) {
         this.pace = pace;
     }
 }
