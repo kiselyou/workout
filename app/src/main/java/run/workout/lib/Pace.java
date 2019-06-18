@@ -1,7 +1,5 @@
 package run.workout.lib;
 
-import android.util.Log;
-
 public class Pace {
     /**
      *
@@ -11,7 +9,7 @@ public class Pace {
     public static String format(double minutes) {
         int wholeMinutes = (int) Math.floor(minutes);
         int seconds = (int) Math.round((minutes - wholeMinutes) * 60);
-        return wholeMinutes + "' " + seconds + "''";
+        return wholeMinutes + "'" + seconds + "''";
     }
 
     /**

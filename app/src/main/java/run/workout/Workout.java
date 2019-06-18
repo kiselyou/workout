@@ -18,8 +18,19 @@ import java.util.TimerTask;
 
 
 class Workout extends TimerTask {
+    /**
+     * Interval in milliseconds.
+     */
     private static final int TIMER_INTERVAL = 1000;
+
+    /**
+     * Time in milliseconds.
+     */
     private int time = 0;
+
+    /**
+     * Distance in meters.
+     */
     private float distance = 0;
     private Runnable eventListener;
     private Timer timer = new Timer();
@@ -77,8 +88,8 @@ class Workout extends TimerTask {
     }
 
     String getDistance() {
-        DecimalFormat df = new DecimalFormat("#.##");
-        return df.format(this.distance);
+        DecimalFormat df = new DecimalFormat("#.###");
+        return df.format(this.distance / 1000);
     }
 
     void setLocation(Location location) {
@@ -104,7 +115,7 @@ class Workout extends TimerTask {
             Location currLocation = lastPoint.getLocation();
 
             float distance = prevLocation.distanceTo(currLocation);
-            this.distance += (distance / 1000);
+            this.distance += distance;
 
             float time = lastPoint.getTimestamp() - prevPoint.getTimestamp();
             double pace = Pace.calculatePace(time / 1000, distance);
@@ -146,13 +157,12 @@ class Workout extends TimerTask {
                 continue;
             }
 
-            double pace = point.getPace();
-            if (pace == 0) {
+            if (!point.hasLocation()) {
                 continue;
             }
 
             count++;
-            sum += pace;
+            sum += point.getPace();
             if (count >= 10) {
                 break;
             }

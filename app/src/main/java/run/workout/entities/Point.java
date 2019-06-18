@@ -18,6 +18,10 @@ public class Point {
         return this.location;
     }
 
+    public boolean hasLocation() {
+        return this.location != null;
+    }
+
     public void setTimestamp(Long value) {
         this.timestamp = value;
     }
