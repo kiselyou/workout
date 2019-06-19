@@ -113,6 +113,12 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/accuracyTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <TextView
                 android:id="@+id/workout_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

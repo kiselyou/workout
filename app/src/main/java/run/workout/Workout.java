@@ -23,7 +23,12 @@ class Workout extends TimerTask {
      */
     private static final int TIMER_INTERVAL = 1000;
 
-    private static final int ACCURACY = 12;
+    private static final int DESIRED_ACCURACY = 12;
+
+    /**
+     * Count points to calculate current pace.
+     */
+    private static final int PACE_COUNT = 100;
 
     /**
      * Time in milliseconds.
@@ -50,27 +55,49 @@ class Workout extends TimerTask {
     }
 
     /**
-     * Найти последнюю активную точку (которая не на паузе).
+     * Найти последнюю активную точку (которая не на паузе) и в которой есть локация с подходящей точностью.
      *
      * @param index - числовое значение которое говорит какую активную точку с конца брать.
-     *              Например: 1 - Взять первую активную точку с конца массива.
-     *                        2 - Взять вторую активную точку с конца массива.
+     *              Например: findSatisfiedPoint(1) - Взять первую активную точку с конца массива.
+     *                        findSatisfiedPoint(2) - Взять вторую активную точку с конца массива.
      * @return Point
      */
-    private Point findLocationPoint(int index) {
+    private Point findSatisfiedPoint(int index) {
         int counterIndex = 0;
         int size = this.points.size() - 1;
         for (int i = size; i >= 0; i--) {
             Point point = this.points.get(i);
-            if (point.isPause()) {
+            if (!this.isPointSatisfied(point)) {
                 continue;
             }
-            if (point.getLocation() == null) {
-                continue;
-            }
+
             counterIndex++;
             if (counterIndex == index) {
                 return point;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Найти активную точку которая следовала перед точкой переданной в параметре.
+     *
+     * @param point - Точка для которой найти предыдущую активную точку.
+     * @return Point
+     */
+    private Point findSatisfiedPrevPoint(Point point) {
+        boolean isMatched = false;
+        int size = this.points.size() - 1;
+        for (int i = size; i >= 0; i--) {
+            Point matchPoint = this.points.get(i);
+            if (!isMatched) {
+                if (matchPoint.getId() == point.getId()) {
+                    isMatched = true;
+                }
+            } else {
+                if (this.isPointSatisfied(matchPoint)) {
+                    return matchPoint;
+                }
             }
         }
         return null;
@@ -89,47 +116,58 @@ class Workout extends TimerTask {
         return this.points.get(this.points.size() - 1);
     }
 
+    String getAccuracy() {
+        Point point = this.findSatisfiedPoint(1);
+        if (point == null) {
+            return null;
+        }
+        if (!point.hasLocation()) {
+            return null;
+        }
+        Location location = point.getLocation();
+        if (!location.hasAccuracy()) {
+            return  null;
+        }
+        return "Accuracy: " + location.getAccuracy() + " Points: " + this.points.size();
+    }
+
     String getDistance() {
         return String.format("%.3f", this.distance / 1000);
     }
 
     void setLocation(Location location) {
-        Point point = this.getLastPoint();
-        if (point == null) {
+        Point lastPoint = this.getLastPoint();
+        if (lastPoint == null) {
             return;
         }
 
-        point.setLocation(location);
+        lastPoint.setLocation(location);
 
         if (this.pauseActivity) {
             return;
         }
 
-        // Последняя точка.
-        Point lastPoint = this.findLocationPoint(1);
-        // Предпоследняя точка
-        Point prevPoint = this.findLocationPoint(2);
-        if (lastPoint == null || prevPoint == null) {
-            return;
-        }
-
-        // Расчет растояния между последней и предпоследней точками.
-        Location prevLocation = prevPoint.getLocation();
-        Location currLocation = lastPoint.getLocation();
-
-        float distance = prevLocation.distanceTo(currLocation);
-        this.distance += distance;
-
-        float time = lastPoint.getTimestamp() - prevPoint.getTimestamp();
-        double pace = Pace.calculatePace(time / 1000, distance);
-        lastPoint.setPace(pace);
-
         if (!this.isPointSatisfied(lastPoint)) {
             return;
         }
 
+        // Предпоследняя точка
+        Point prevPoint = this.findSatisfiedPoint(2);
+        if (prevPoint == null) {
+            return;
+        }
+
+        // Расчет растояния и темпа между последней и предпоследней точками.
+        Location prevLocation = prevPoint.getLocation();
+        Location currLocation = lastPoint.getLocation();
+
+        float time = lastPoint.getTimestamp() - prevPoint.getTimestamp();
+        float distance = prevLocation.distanceTo(currLocation);
+        double pace = Pace.calculatePace(time / 1000, distance);
+
         this.cachePaceCount++;
         this.cachePaceSum += pace;
+        this.distance += distance;
         this.eventListener.run();
     }
 
@@ -147,7 +185,7 @@ class Workout extends TimerTask {
 
     /**
      *
-     * @return - средний темп за последние 10 точек.
+     * @return - средний темп за последние N точек.
      */
     String getPace() {
         int size = this.points.size();
@@ -163,9 +201,22 @@ class Workout extends TimerTask {
                 continue;
             }
 
+            Point prevPoint = findSatisfiedPrevPoint(point);
+            if (prevPoint == null) {
+                continue;
+            }
+
+            // Расчет растояния и темпа между последней и предпоследней точками.
+            Location prevLocation = prevPoint.getLocation();
+            Location currLocation = point.getLocation();
+
+            float time = point.getTimestamp() - prevPoint.getTimestamp();
+            float distance = prevLocation.distanceTo(currLocation);
+            double pace = Pace.calculatePace(time / 1000, distance);
+
             count++;
-            sum += point.getPace();
-            if (count >= 10) {
+            sum += pace;
+            if (count >= Workout.PACE_COUNT) {
                 break;
             }
         }
@@ -187,7 +238,7 @@ class Workout extends TimerTask {
             return false;
         }
 
-        return location.getAccuracy() < Workout.ACCURACY;
+        return location.getAccuracy() <= Workout.DESIRED_ACCURACY;
     }
 
     String getBPM() {

@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import run.workout.entities.Point;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     public static final int PERMISSIONS_REQUEST_LOCATION = 1;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView workoutAVGPace;
     private TextView workoutBPM;
     private TextView workoutDistance;
+
+    private TextView accuracyTest;
 
     private LinearLayout layoutStart;
     private LinearLayout layoutPause;
@@ -78,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layoutPause = findViewById(R.id.layout_pause);
         layoutStop = findViewById(R.id.layout_stop);
 
+        accuracyTest = findViewById(R.id.accuracyTest);
+
 //        btnStart.setOnLongClickListener(this);
 //        btnPause.setOnLongClickListener(this);
 //        btnStop.setOnLongClickListener(this);
@@ -90,6 +96,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        Point point1 = new Point();
+        Log.d("debug", "p1: " + point1.getId());
+        Point point2 = new Point();
+        Log.d("debug", "p2: " + point2.getId());
+        Point point3 = new Point();
+        Log.d("debug", "p3: " + point3.getId());
     }
 
     @Override
@@ -197,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         workoutAVGPace.setText(workout.getAVGPace());
         workoutBPM.setText(workout.getBPM());
         workoutDistance.setText(workout.getDistance());
+        accuracyTest.setText(workout.getAccuracy());
     }
 
     @Override

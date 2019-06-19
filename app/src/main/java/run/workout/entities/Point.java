@@ -4,11 +4,21 @@ import android.location.Location;
 
 public class Point {
 
+    private static int counter = 0;
+    private int id;
     private int bpm;
     private double pace;
     private Long timestamp;
     private Location location;
     private Boolean pause = false;
+
+    public Point() {
+        this.id = ++counter;
+    }
+
+    public int getId() {
+        return this.id;
+    }
 
     public void setLocation(Location location) {
         this.location = location;
