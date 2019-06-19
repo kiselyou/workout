@@ -96,13 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        Point point1 = new Point();
-        Log.d("debug", "p1: " + point1.getId());
-        Point point2 = new Point();
-        Log.d("debug", "p2: " + point2.getId());
-        Point point3 = new Point();
-        Log.d("debug", "p3: " + point3.getId());
     }
 
     @Override

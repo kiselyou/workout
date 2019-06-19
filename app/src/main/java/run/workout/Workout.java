@@ -28,7 +28,7 @@ class Workout extends TimerTask {
     /**
      * Count points to calculate current pace.
      */
-    private static final int PACE_COUNT = 100;
+    private static final int PACE_COUNT = 20;
 
     /**
      * Time in milliseconds.
@@ -48,6 +48,8 @@ class Workout extends TimerTask {
 
     private int cachePaceCount = 0;
     private double cachePaceSum = 0;
+
+    private int testCountLocation = 0;
 
     Workout() {
         this.formatter = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -128,7 +130,7 @@ class Workout extends TimerTask {
         if (!location.hasAccuracy()) {
             return  null;
         }
-        return "Accuracy: " + location.getAccuracy() + " Points: " + this.points.size();
+        return "Accuracy: " + location.getAccuracy() + " Points: " + this.points.size() + " countLocation: " + testCountLocation + " countDistance: " + this.cachePaceCount;
     }
 
     String getDistance() {
@@ -141,6 +143,7 @@ class Workout extends TimerTask {
             return;
         }
 
+        this.testCountLocation++;
         lastPoint.setLocation(location);
 
         if (this.pauseActivity) {
