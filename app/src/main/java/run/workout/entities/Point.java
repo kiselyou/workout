@@ -14,6 +14,7 @@ public class Point {
 
     public Point() {
         this.id = ++counter;
+        this.setTimestamp(System.currentTimeMillis());
     }
 
     public int getId() {

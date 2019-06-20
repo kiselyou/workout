@@ -106,6 +106,28 @@ class Workout extends TimerTask {
     }
 
     /**
+     *
+     * @param targetPoint - Точка перед которой нужно найти другую точку.
+     * @return Point
+     */
+    private Point findPrevPoint(Point targetPoint) {
+        boolean isMatched = false;
+        int size = this.points.size() - 1;
+        for (int i = size; i >= 0; i--) {
+            Point point = this.points.get(i);
+            if (point.getId() == targetPoint.getId()) {
+                isMatched = true;
+                continue;
+            }
+
+            if (isMatched) {
+                return point;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Получение последней точки. Не зависимо от статуса.
      *
      * @return Point|null
@@ -154,7 +176,12 @@ class Workout extends TimerTask {
             return;
         }
 
-        // Предпоследняя точка
+        // Проверить можно ли выполнить расчет темпа и дистанции.
+        if (!isAllowedCalculatePace(lastPoint)) {
+            return;
+        }
+
+        // Предпоследняя активная точка.
         Point prevPoint = this.findSatisfiedPoint(2);
         if (prevPoint == null) {
             return;
@@ -172,6 +199,17 @@ class Workout extends TimerTask {
         this.cachePaceSum += pace;
         this.distance += distance;
         this.eventListener.run();
+    }
+
+    private boolean isAllowedCalculatePace(Point point) {
+        Point prevPoint = this.findPrevPoint(point);
+        if (prevPoint == null) {
+            return false;
+        }
+        if (prevPoint.isPause()) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -204,6 +242,12 @@ class Workout extends TimerTask {
                 continue;
             }
 
+            // Проверить можно ли выполнить расчет темпа и дистанции.
+            if (!isAllowedCalculatePace(point)) {
+                continue;
+            }
+
+            // Предпоследняя активная точка.
             Point prevPoint = findSatisfiedPrevPoint(point);
             if (prevPoint == null) {
                 continue;
@@ -274,9 +318,12 @@ class Workout extends TimerTask {
         }
         Point point = new Point();
         point.setPause(this.pauseActivity);
-        point.setTimestamp(System.currentTimeMillis());
         this.points.add(point);
         this.eventListener.run();
+    }
+
+    public void addPoint(Point point) {
+        this.points.add(point);
     }
 
     /**
