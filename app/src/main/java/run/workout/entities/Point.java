@@ -7,7 +7,6 @@ public class Point {
     private static int counter = 0;
     private int id;
     private int bpm;
-    private double pace;
     private Long timestamp;
     private Location location;
     private Boolean pause = false;
@@ -55,13 +54,5 @@ public class Point {
 
     public int getBPM() {
         return this.bpm;
-    }
-
-    public double getPace() {
-        return this.pace;
-    }
-
-    public void setPace(double pace) {
-        this.pace = pace;
     }
 }
